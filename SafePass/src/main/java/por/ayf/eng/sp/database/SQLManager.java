@@ -3,6 +3,8 @@ package por.ayf.eng.sp.database;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -90,19 +92,24 @@ public class SQLManager {
 				database.delete();
 				
 				JOptionPane.showMessageDialog(null,
-						"Número de intentos excedido.", 
+						"Número de intentos excedido. Por seguridad, se ha borrado su base de datos.", 
 						"Información",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
 				JOptionPane.showMessageDialog(null,
-						"Un error a ocurrido al cargar.", 
+						"Un error ha ocurrido, su base de datos no existe.", 
 						"Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}	
 		catch(Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, "Un error ha ocurrido al verificar su base de datos.", e);
+			
+			JOptionPane.showMessageDialog(null,
+					"Un error ha ocurrido al verificar su base de datos.", 
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -127,6 +134,8 @@ public class SQLManager {
 			connection.close();
 		} 
 		catch (SQLException e) {
+			Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, "Error al desconectar a la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al desconectar a la base de datos.", 
 				"Error",
@@ -145,6 +154,8 @@ public class SQLManager {
 			sqlQuery.insertUser(sqlManager, user);	
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLManager.class.getName()).log(Level.SEVERE, "Error al crear las tablas de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al crear las tablas de la base de datos.", 
 				"Error",

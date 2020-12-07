@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -33,6 +35,8 @@ public class SQLQuery {
 													+ "PASSWORD TEXT(50) NOT NULL);");
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al crear la tabla de registros de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al crear la tabla de registros de la base de datos.", 
 				"Error",
@@ -50,6 +54,8 @@ public class SQLQuery {
 												+ "PASSWORD TEXT(50) NOT NULL);");
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al crear la tabla de usuarios de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al crear la tabla de usuarios de la base de datos.", 
 				"Error",
@@ -66,6 +72,8 @@ public class SQLQuery {
 			sentencia.execute("INSERT INTO REGISTRY (NAME, USERNAME, EMAIL, PASSWORD) VALUES ('" + registry.getName() + "', '" + registry.getUsername() + "', '" + registry.getEmail() + "', '" + registry.getPassword() + "');");	
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al insertar nuevo usuario de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al insertar nuevo usuario de la base de datos.", 
 				"Error",
@@ -82,6 +90,8 @@ public class SQLQuery {
 			sentencia.execute("INSERT INTO USER (USERNAME, PASSWORD) VALUES ('" + user.getUsername() + "', '" + user.getPassword() + "');");	
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al insertar nuevo usuario de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al insertar nuevo usuario de la base de datos.", 
 				"Error",
@@ -98,6 +108,8 @@ public class SQLQuery {
 			sentencia.execute("UPDATE REGISTRY SET NAME = '" + registry.getName() + "', USERNAME = '" + registry.getUsername() + "', EMAIL = '" + registry.getEmail() + "', PASSWORD = '" + registry.getPassword() + "' WHERE NAME = '" + oldName + "';");	
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al actualizar el registro de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al actualizar el registro de la base de datos.", 
 				"Error",
@@ -121,6 +133,8 @@ public class SQLQuery {
             }
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener los registros de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al obtener los registros de la base de datos.", 
 				"Error",
@@ -144,6 +158,8 @@ public class SQLQuery {
             }
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener el registro de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al obtener el registro de la base de datos.", 
 				"Error",
@@ -167,6 +183,8 @@ public class SQLQuery {
             }
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener el usuario de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al obtener el usuario de la base de datos.", 
 				"Error",
@@ -185,6 +203,8 @@ public class SQLQuery {
 			sentencia.execute("DELETE FROM REGISTRY WHERE NAME = '" + name + "';");	
 		} 
 		catch (Exception e) {
+			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al eliminar el registro de la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al eliminar el registro de la base de datos.", 
 				"Error",

@@ -17,6 +17,8 @@ import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -84,6 +86,8 @@ public class ViewMainWindow extends JFrame {
 			load = true;
 		}
 		catch (Exception e) {
+			Logger.getLogger(ViewMainWindow.class.getName()).log(Level.SEVERE, "Error al crear la base de datos.", e);
+			
 			JOptionPane.showMessageDialog(null,
 				"Error al crear la base de datos.",
 				"Error",
@@ -110,6 +114,8 @@ public class ViewMainWindow extends JFrame {
 				sqlManager.loadDatabase(url);
 			} 
 			catch (Exception e) {
+				Logger.getLogger(ViewMainWindow.class.getName()).log(Level.SEVERE, "Error al cargar base de datos.", e);
+				
 				JOptionPane.showMessageDialog(null,
 					"Error al cargar base de datos.", 
 					"Error", 
