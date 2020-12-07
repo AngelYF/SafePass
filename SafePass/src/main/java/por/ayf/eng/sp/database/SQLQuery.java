@@ -5,13 +5,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
 import por.ayf.eng.sp.database.bean.BeanRegistry;
 import por.ayf.eng.sp.database.bean.BeanUser;
+import por.ayf.eng.sp.util.Util;
 
 /**
  *  Class SQLManager will manage the SQL queries.
@@ -33,14 +32,8 @@ public class SQLQuery {
 													+ "USERNAME TEXT(50) NOT NULL," 
 													+ "EMAIL TEXT(50) NOT NULL,"
 													+ "PASSWORD TEXT(50) NOT NULL);");
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al crear la tabla de registros de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al crear la tabla de registros de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al crear la tabla de registros de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -52,14 +45,8 @@ public class SQLQuery {
 			sentencia = connection.createStatement();
 			sentencia.execute("CREATE TABLE USER (USERNAME TEXT(50) PRIMARY KEY NOT NULL, "
 												+ "PASSWORD TEXT(50) NOT NULL);");
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al crear la tabla de usuarios de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al crear la tabla de usuarios de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al crear la tabla de usuarios de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -70,14 +57,8 @@ public class SQLQuery {
 		try {
 			sentencia = connection.createStatement();
 			sentencia.execute("INSERT INTO REGISTRY (NAME, USERNAME, EMAIL, PASSWORD) VALUES ('" + registry.getName() + "', '" + registry.getUsername() + "', '" + registry.getEmail() + "', '" + registry.getPassword() + "');");	
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al insertar nuevo usuario de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al insertar nuevo usuario de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al insertar nuevo usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -88,14 +69,8 @@ public class SQLQuery {
 		try {
 			sentencia = connection.createStatement();
 			sentencia.execute("INSERT INTO USER (USERNAME, PASSWORD) VALUES ('" + user.getUsername() + "', '" + user.getPassword() + "');");	
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al insertar nuevo usuario de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al insertar nuevo usuario de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al insertar nuevo usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -106,14 +81,8 @@ public class SQLQuery {
 		try {
 			sentencia = connection.createStatement();
 			sentencia.execute("UPDATE REGISTRY SET NAME = '" + registry.getName() + "', USERNAME = '" + registry.getUsername() + "', EMAIL = '" + registry.getEmail() + "', PASSWORD = '" + registry.getPassword() + "' WHERE NAME = '" + oldName + "';");	
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al actualizar el registro de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al actualizar el registro de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al actualizar el registro de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -131,14 +100,8 @@ public class SQLQuery {
 				registry = new BeanRegistry(result.getString("NAME"), result.getString("USERNAME"), result.getString("EMAIL"), result.getString("PASSWORD"));
 				list.add(registry);
             }
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener los registros de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al obtener los registros de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al obtener los registros de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 		
 		return list;
@@ -156,14 +119,8 @@ public class SQLQuery {
 			while(result.next()) {
 				registry = new BeanRegistry(result.getString("NAME"), result.getString("USERNAME"), result.getString("EMAIL"), result.getString("PASSWORD"));
             }
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener el registro de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al obtener el registro de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al obtener el registro de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 		
 		return registry;
@@ -181,14 +138,8 @@ public class SQLQuery {
 			while(result.next()) {
 				user = new BeanUser(result.getString("USERNAME"), result.getString("PASSWORD"));
             }
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al obtener el usuario de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al obtener el usuario de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al obtener el usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 		
 		return user;
@@ -201,14 +152,8 @@ public class SQLQuery {
 		try {
 			sentencia = connection.createStatement();
 			sentencia.execute("DELETE FROM REGISTRY WHERE NAME = '" + name + "';");	
-		} 
-		catch (Exception e) {
-			Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, "Error al eliminar el registro de la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al eliminar el registro de la base de datos.", 
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(SQLQuery.class.getName(), "Error al eliminar el registro de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 }

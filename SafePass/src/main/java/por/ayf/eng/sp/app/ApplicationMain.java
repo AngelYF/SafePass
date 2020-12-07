@@ -1,11 +1,9 @@
 package por.ayf.eng.sp.app;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.ViewMainWindow;
 
 /**
@@ -25,14 +23,8 @@ public class ApplicationMain {
 			
 	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 				// By defect.
 	        new ViewMainWindow(); 
-        } 
-		catch (Exception e) {
-			Logger.getLogger(ViewMainWindow.class.getName()).log(Level.SEVERE, "Ha ocurrido un error al iniciar la aplicación.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				 	"Ha ocurrido un error al iniciar la aplicación.", 
-					"Error",
-					JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+			Util.logMessage(ViewMainWindow.class.getName(), "Ha ocurrido un error al iniciar la aplicación.", JOptionPane.ERROR_MESSAGE, e);
         } 
 	}
 }

@@ -19,6 +19,7 @@ import javax.swing.JPasswordField;
 import por.ayf.eng.sp.database.SQLManager;
 import por.ayf.eng.sp.database.SQLQuery;
 import por.ayf.eng.sp.database.bean.BeanRegistry;
+import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.ViewMainWindow;
 
 /**
@@ -83,10 +84,7 @@ public class ComponentViewCreatePass extends JDialog {
 			ViewMainWindow.refreshList();
 			dispose();
 		} else {
-			JOptionPane.showMessageDialog(null,
-				"El registro debe tener un nombre para ser creado.", 
-				"Nombre obligatorio", 
-				JOptionPane.INFORMATION_MESSAGE);
+			Util.logMessage(ViewMainWindow.class.getName(), "El registro debe tener un nombre para ser creado.", JOptionPane.INFORMATION_MESSAGE, null);
 		}
 	}
 	

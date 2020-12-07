@@ -17,8 +17,6 @@ import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -30,6 +28,7 @@ import javax.swing.JScrollPane;
 import por.ayf.eng.sp.database.SQLManager;
 import por.ayf.eng.sp.database.SQLQuery;
 import por.ayf.eng.sp.database.bean.BeanRegistry;
+import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.comp.ComponentViewConsultPass;
 import por.ayf.eng.sp.view.comp.ComponentViewCreatePass;
 import por.ayf.eng.sp.view.comp.ComponentViewCreator;
@@ -76,22 +75,15 @@ public class ViewMainWindow extends JFrame {
 		// If the name is incorrect, give one by defect.
 		if(url == null || url.equals("") || url.contains(".")) {
 			url = "safepass.sqlite";
-		}
-		else {
+		} else {
 			url += ".sqlite";
 		}
 		
 		try {
 			sqlManager.createDatabase(url);
 			load = true;
-		}
-		catch (Exception e) {
-			Logger.getLogger(ViewMainWindow.class.getName()).log(Level.SEVERE, "Error al crear la base de datos.", e);
-			
-			JOptionPane.showMessageDialog(null,
-				"Error al crear la base de datos.",
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			Util.logMessage(ViewMainWindow.class.getName(), "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -112,20 +104,13 @@ public class ViewMainWindow extends JFrame {
 			
 			try {
 				sqlManager.loadDatabase(url);
-			} 
-			catch (Exception e) {
-				Logger.getLogger(ViewMainWindow.class.getName()).log(Level.SEVERE, "Error al cargar base de datos.", e);
-				
-				JOptionPane.showMessageDialog(null,
-					"Error al cargar base de datos.", 
-					"Error", 
-					JOptionPane.ERROR_MESSAGE);
+			} catch (Exception e) {
+				Util.logMessage(ViewMainWindow.class.getName(), "Error al cargar base de datos.", JOptionPane.ERROR_MESSAGE, e);
 			}
 		}	
 		
 		refreshList();
 	}
-	
 	
 	private void creator() {
 		new ComponentViewCreator(this, true).setVisible(true);
@@ -135,12 +120,8 @@ public class ViewMainWindow extends JFrame {
 		// Check the database is active.
 		if(url != null && load) {
 			new ComponentViewCreatePass(this, true, sqlManager, load).setVisible(true);
-		}
-		else {
-			JOptionPane.showMessageDialog(null,
-				"Debe cargar la base de datos previamente.",
-				"Warning", 
-				JOptionPane.WARNING_MESSAGE);
+		} else {
+			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	
@@ -151,12 +132,8 @@ public class ViewMainWindow extends JFrame {
 			if(list.getSelectedIndex() != -1) { 
 				new ComponentViewModifyPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
 			}
-		}
-		else {
-			JOptionPane.showMessageDialog(null,
-				"Debe cargar la base de datos previamente.",
-				"Warning",
-				JOptionPane.WARNING_MESSAGE);
+		} else {
+			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	
@@ -167,12 +144,8 @@ public class ViewMainWindow extends JFrame {
 			if(list.getSelectedIndex() != -1) { 
 				new ComponentViewConsultPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
 			}
-		}
-		else {
-			JOptionPane.showMessageDialog(null,
-				"Debe cargar la base de datos previamente.",
-				"Warning",
-				JOptionPane.WARNING_MESSAGE);
+		} else {
+			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	

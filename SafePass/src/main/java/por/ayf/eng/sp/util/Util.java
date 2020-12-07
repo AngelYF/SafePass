@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 public class Util {
 	
 	public static void logMessage(String nameClass, String message, int typeMessage, Exception e) {
-		
 		switch(typeMessage) {
 			case 0:	// ERROR
 				Logger.getLogger(nameClass).log(Level.SEVERE, message, e);
@@ -44,7 +43,6 @@ public class Util {
 				break;
 			default:
 				break;
-		}
-		
+		}	
 	}
 }
