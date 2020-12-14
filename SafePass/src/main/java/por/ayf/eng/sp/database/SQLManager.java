@@ -50,7 +50,7 @@ public class SQLManager {
         	password = JOptionPane.showInputDialog("¿Cuál es su password?");
         } while(password == null || password.equals(""));
 		
-        Util.logMessage(SQLManager.class.getName(), 
+        Util.showMessage(SQLManager.class, 
         		"\nDatos de conexión: \n\nUsuario:       " + username +"\nPassword:    " + password + "\n\n", 
         		JOptionPane.INFORMATION_MESSAGE, 
         		null);
@@ -88,13 +88,13 @@ public class SQLManager {
 			if(database.exists()) {
 				disconnect();
 				database.delete();
-				Util.logMessage(SQLManager.class.getName(), "Número de intentos excedido. Por seguridad, se ha borrado su base de datos.", JOptionPane.INFORMATION_MESSAGE, null);
+				Util.showMessage(SQLManager.class, "Número de intentos excedido. Por seguridad, se ha borrado su base de datos.", JOptionPane.INFORMATION_MESSAGE, null);
 			} else {
-				Util.logMessage(SQLManager.class.getName(), "Error, su base de datos no existe.", JOptionPane.ERROR_MESSAGE, null);
+				Util.showMessage(SQLManager.class, "Error, su base de datos no existe.", JOptionPane.ERROR_MESSAGE, null);
 			}
 		}	
 		catch(Exception e) {
-			Util.logMessage(SQLManager.class.getName(), "Error al verificar su base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			Util.showMessage(SQLManager.class, "Error al verificar su base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -107,7 +107,7 @@ public class SQLManager {
     	connection = dataSource.getConnection();
     	
     	if(connection == null) {
-    		Util.logMessage(SQLManager.class.getName(), "Error al conectar a la base de datos.", JOptionPane.ERROR_MESSAGE, null);
+    		Util.showMessage(SQLManager.class, "Error al conectar a la base de datos.", JOptionPane.ERROR_MESSAGE, null);
     	}
 	}
 	
@@ -115,7 +115,7 @@ public class SQLManager {
 		try {
 			connection.close();
 		} catch (SQLException e) {
-			Util.logMessage(SQLManager.class.getName(), "Error al desconectar a la base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			Util.showMessage(SQLManager.class, "Error al desconectar a la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -129,7 +129,7 @@ public class SQLManager {
 			sqlQuery.createTableUser(sqlManager);
 			sqlQuery.insertUser(sqlManager, user);	
 		} catch (Exception e) {
-			Util.logMessage(SQLManager.class.getName(), "Error al crear las tablas de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			Util.showMessage(SQLManager.class, "Error al crear las tablas de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 

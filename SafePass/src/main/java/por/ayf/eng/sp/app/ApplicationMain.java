@@ -24,7 +24,7 @@ public class ApplicationMain {
 	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 				// By defect.
 	        new ViewMainWindow(); 
         } catch (Exception e) {
-			Util.logMessage(ViewMainWindow.class.getName(), "Ha ocurrido un error al iniciar la aplicación.", JOptionPane.ERROR_MESSAGE, e);
+			Util.showMessage(ViewMainWindow.class, "Ha ocurrido un error al iniciar la aplicación.", JOptionPane.ERROR_MESSAGE, e);
         } 
 	}
 }

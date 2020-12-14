@@ -87,7 +87,7 @@ public class ComponentViewModifyPass extends JDialog {
 			ViewMainWindow.refreshList();
 			dispose();
 		} else {
-			Util.logMessage(ViewMainWindow.class.getName(), "El registro debe tener un nombre para ser editado.", JOptionPane.INFORMATION_MESSAGE, null);
+			Util.showMessage(ViewMainWindow.class, "El registro debe tener un nombre para ser editado.", JOptionPane.INFORMATION_MESSAGE, null);
 		}
 	}
 	

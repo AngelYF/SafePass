@@ -83,7 +83,7 @@ public class ViewMainWindow extends JFrame {
 			sqlManager.createDatabase(url);
 			load = true;
 		} catch (Exception e) {
-			Util.logMessage(ViewMainWindow.class.getName(), "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			Util.showMessage(ViewMainWindow.class, "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
 	}
 	
@@ -105,7 +105,7 @@ public class ViewMainWindow extends JFrame {
 			try {
 				sqlManager.loadDatabase(url);
 			} catch (Exception e) {
-				Util.logMessage(ViewMainWindow.class.getName(), "Error al cargar base de datos.", JOptionPane.ERROR_MESSAGE, e);
+				Util.showMessage(ViewMainWindow.class, "Error al cargar base de datos.", JOptionPane.ERROR_MESSAGE, e);
 			}
 		}	
 		
@@ -121,7 +121,7 @@ public class ViewMainWindow extends JFrame {
 		if(url != null && load) {
 			new ComponentViewCreatePass(this, true, sqlManager, load).setVisible(true);
 		} else {
-			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
+			Util.showMessage(ViewMainWindow.class, "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	
@@ -133,7 +133,7 @@ public class ViewMainWindow extends JFrame {
 				new ComponentViewModifyPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
 			}
 		} else {
-			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
+			Util.showMessage(ViewMainWindow.class, "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class ViewMainWindow extends JFrame {
 				new ComponentViewConsultPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
 			}
 		} else {
-			Util.logMessage(ViewMainWindow.class.getName(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
+			Util.showMessage(ViewMainWindow.class, "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
 	}
 	
