@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
  */
 
 public class Util {
-	
 	public static final String LEVEL_TRACE	= "TRACE";
 	public static final String LEVEL_DEBUG	= "DEBUG";
 	public static final String LEVEL_INFO	= "INFO";
@@ -69,6 +68,7 @@ public class Util {
 						message,
 						"Advertencia", 
 						JOptionPane.WARNING_MESSAGE);
+				break;
 			case 3:	// QUESTION
 				JOptionPane.showMessageDialog(null,
 						message,
