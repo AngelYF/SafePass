@@ -1,10 +1,14 @@
 package por.ayf.eng.sp.database;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 
 import org.sqlite.SQLiteDataSource;
 import org.sqlite.SQLiteJDBCLoader;
@@ -16,7 +20,7 @@ import por.ayf.eng.sp.util.Util;
  *  Class SQLManager will manage the SQL Connection.
  * 
  *  @author: Ángel Yagüe Flor.
- *  @version: 1.0.
+ *  @version: 2.0.
  */
 
 public class SQLManager {
@@ -47,11 +51,22 @@ public class SQLManager {
         } while(username == null || username.equals(""));
         
         do {
-        	password = JOptionPane.showInputDialog("¿Cuál es su password?");
+        	JPanel panelAux = new JPanel(new BorderLayout());
+        	JLabel lblAux = new JLabel("¿Cuál es su password?");
+        	JPasswordField jpfPasswordAux = new JPasswordField();
+        	panelAux.add(lblAux, BorderLayout.NORTH);
+        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
+        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        	if (option == JOptionPane.OK_OPTION) {
+        		password = new String(jpfPasswordAux.getPassword());
+        	} else {
+        		password = "";
+        	}
         } while(password == null || password.equals(""));
 		
         Util.showMessage(SQLManager.class, 
-        		"\nDatos de conexión: \n\nUsuario:       " + username +"\nPassword:    " + password + "\n\n", 
+        		"Base de datos creada.", 
         		JOptionPane.INFORMATION_MESSAGE, 
         		null);
         
@@ -69,12 +84,30 @@ public class SQLManager {
 		
 		do {
         	username = JOptionPane.showInputDialog("¿Cuál es su nombre de usuario?");
-        	password = JOptionPane.showInputDialog("¿Cuál es su password?");
+        	
+        	JPanel panelAux = new JPanel(new BorderLayout());
+        	JLabel lblAux = new JLabel("¿Cuál es su password?");
+        	JPasswordField jpfPasswordAux = new JPasswordField();
+        	panelAux.add(lblAux, BorderLayout.NORTH);
+        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
+        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        	if (option == JOptionPane.OK_OPTION) {
+        		password = new String(jpfPasswordAux.getPassword());
+        	} else {
+        		password = "";
+        	}
         	
         	if(user.getUsername().equals(username) && user.getPassword().equals(password)) {
         		return;
         	} else {
         		attempts++;
+        		
+        		if(attempts == 3) {
+        			Util.showMessage(SQLManager.class, "No dispone de más intentos.", JOptionPane.WARNING_MESSAGE, null);
+        		} else {
+        			Util.showMessage(SQLManager.class, "Dispone de " + (3 - attempts) + " intento/s más.", JOptionPane.WARNING_MESSAGE, null);
+        		}
         	}
         } while(attempts != 3);
 
