@@ -38,7 +38,7 @@ import por.ayf.eng.sp.view.comp.ComponentViewModifyPass;
  *  Class will contain the JFrame of the main window.
  * 
  *  @author: Ángel Yagüe Flor.
- *  @version: 2.0.
+ *  @version: 3.0.
  */
 
 public class ViewMainWindow extends JFrame {
@@ -60,9 +60,9 @@ public class ViewMainWindow extends JFrame {
 	private JList<String> list;								
 	private static DefaultListModel<String> model;			
 	
-	private String url = null;								
-	private static SQLManager sqlManager = null;					
+	private String url = null;										
 	private boolean load = false;						
+	private static SQLManager sqlManager = null;	
 	
 	public ViewMainWindow() {
 		sqlManager = SQLManager.getInstance();

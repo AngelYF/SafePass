@@ -24,7 +24,7 @@ import por.ayf.eng.sp.view.ViewMainWindow;
  *  JDialog will see a registry.
  * 
  *  @author: Ángel Yagüe Flor.
- *  @version: 2.0.
+ *  @version: 3.0.
  */
 
 public class ComponentViewConsultPass extends JDialog {
@@ -39,8 +39,17 @@ public class ComponentViewConsultPass extends JDialog {
 	private JTextField tfEmail;							
 	private JLabel lblPassword;							
 	private JPasswordField tfpPassword;					
-	private JButton btnShow;							
-	private JButton btnBack;							
+	private JButton btnShowPassword;	
+	private JLabel lblQuestion;
+	private JTextField tfQuestion;
+	private JLabel lblAnswerQuestion;
+	private JPasswordField tfpAnswerQuestion;
+	private JButton btnShowAnswer;
+	private JLabel lblDateCreate;
+	private JTextField tfDateCreate;
+	private JLabel lblDateUpdate;
+	private JTextField tfDateUpdate;
+	private JButton btnBack;	
 	
 	private SQLManager sqlManager;
 	private String oldName;
@@ -55,17 +64,27 @@ public class ComponentViewConsultPass extends JDialog {
 	private void showPassword() {
 		if(tfpPassword.getEchoChar() == (char) 0) { // If is hide.
 			tfpPassword.setEchoChar('*');
-			btnShow.setText("Mostrar");
+			btnShowPassword.setText("Mostrar");
 		} else {									
 			tfpPassword.setEchoChar((char) 0);
-			btnShow.setText("Ocultar");
+			btnShowPassword.setText("Ocultar");
+		}
+	}
+	
+	private void showAnswer() {
+		if(tfpAnswerQuestion.getEchoChar() == (char) 0) { // If is hide.
+			tfpAnswerQuestion.setEchoChar('*');
+			btnShowAnswer.setText("Mostrar");
+		} else {								
+			tfpAnswerQuestion.setEchoChar((char) 0);
+			btnShowAnswer.setText("Ocultar");
 		}
 	}
 
 	private void initComponents() {
-		setTitle("SafePass");
+		setTitle("Consultar registro");
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/resources/images/icon.png"));
-		setBounds(100, 100, 375, 340);
+		setBounds(100, 100, 430, 390);
 		setLocationRelativeTo(null); 		// Center the view.
 		setResizable(false); 				// Cannot resizable.
 		getContentPane().setLayout(new BorderLayout());
@@ -73,60 +92,135 @@ public class ComponentViewConsultPass extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);	
 		
+		SQLQuery sqlQuery = new SQLQuery();
+		BeanRegistry registry = sqlQuery.selectRegistryByName(sqlManager, oldName);
+		
+		// Name:
+		
 		lblName = new JLabel("Nombre ");
 		lblName.setBounds(30, 30, 169, 14);
 		contentPanel.add(lblName);
 		
-		SQLQuery sqlQuery = new SQLQuery();
-		BeanRegistry registry = sqlQuery.selectRegistryByName(sqlManager, oldName);
-		
 		tfName = new JTextField();
+		tfName.setEditable(false);
 		tfName.setBounds(30, 55, 169, 20);
 		tfName.setText(registry.getName());
-		contentPanel.add(tfName);
 		tfName.setColumns(10);
+		contentPanel.add(tfName);
+		
+		// Username:
 		
 		lblUsername = new JLabel("Nombre de usuario");
 		lblUsername.setBounds(30, 86, 169, 14);
 		contentPanel.add(lblUsername);
 		
 		tfUsername = new JTextField();
+		tfUsername.setEditable(false);
 		tfUsername.setBounds(30, 111, 169, 20);
 		tfUsername.setText(registry.getUsername()); 
-		contentPanel.add(tfUsername);
 		tfUsername.setColumns(10);
+		contentPanel.add(tfUsername);
+		
+		// Email:
 		
 		lblEmail = new JLabel("Email");
-		lblEmail.setBounds(30, 142, 46, 14);
+		lblEmail.setBounds(30, 142, 169, 14);
 		contentPanel.add(lblEmail);
 		
 		tfEmail = new JTextField();
+		tfEmail.setEditable(false);
 		tfEmail.setBounds(30, 167, 169, 20);
 		tfEmail.setText(registry.getEmail()); 
-		contentPanel.add(tfEmail);
 		tfEmail.setColumns(10);
+		contentPanel.add(tfEmail);
+		
+		// Password:
 		
 		lblPassword = new JLabel("Password");
 		lblPassword.setBounds(30, 198, 46, 14);
 		contentPanel.add(lblPassword);
 		
 		tfpPassword = new JPasswordField();
+		tfpPassword.setEditable(false);
 		tfpPassword.setEchoChar('*');
 		tfpPassword.setText(registry.getPassword()); 
 		tfpPassword.setBounds(30, 223, 169, 20);
 		contentPanel.add(tfpPassword);
 		
-		btnShow = new JButton("Mostrar");
-		btnShow.addActionListener(new ActionListener() {
+		btnShowPassword = new JButton("Mostrar");
+		btnShowPassword.setBounds(30, 254, 95, 23);
+		btnShowPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showPassword();
 			}
 		});
-		btnShow.setBounds(30, 254, 95, 23);
-		contentPanel.add(btnShow);
+		contentPanel.add(btnShowPassword);
+		
+		// Question:
+		
+		lblQuestion = new JLabel("Pregunta secreta");
+		lblQuestion.setBounds(224, 142, 169, 14);
+		contentPanel.add(lblQuestion);
+		
+		tfQuestion = new JTextField();
+		tfQuestion.setEditable(false);
+		tfQuestion.setText(registry.getQuestion());
+		tfQuestion.setColumns(10);
+		tfQuestion.setBounds(224, 167, 169, 20);
+		contentPanel.add(tfQuestion);
+		
+		// Answer Question:
+		
+		lblAnswerQuestion = new JLabel("Respuesta secreta");
+		lblAnswerQuestion.setBounds(224, 198, 169, 14);
+		contentPanel.add(lblAnswerQuestion);
+		
+		tfpAnswerQuestion = new JPasswordField();
+		tfpAnswerQuestion.setText(registry.getAnswerQuestion());
+		tfpAnswerQuestion.setEditable(false);
+		tfpAnswerQuestion.setEchoChar('*');
+		tfpAnswerQuestion.setBounds(224, 223, 169, 20);
+		contentPanel.add(tfpAnswerQuestion);
+		
+		btnShowAnswer = new JButton("Mostrar");
+		btnShowAnswer.setBounds(224, 254, 95, 23);
+		btnShowAnswer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showAnswer();
+			}
+		});
+		contentPanel.add(btnShowAnswer);
+		
+		// Date Create:
+		
+		lblDateCreate = new JLabel("Fecha de creación");
+		lblDateCreate.setBounds(30, 288, 169, 14);
+		contentPanel.add(lblDateCreate);
+		
+		tfDateCreate = new JTextField();
+		tfDateCreate.setEditable(false);
+		tfDateCreate.setText(registry.getDateCreate());
+		tfDateCreate.setColumns(10);
+		tfDateCreate.setBounds(30, 313, 169, 20);
+		contentPanel.add(tfDateCreate);
+		
+		// Date Update:
+		
+		lblDateUpdate = new JLabel("Fecha de actualización");
+		lblDateUpdate.setBounds(224, 288, 169, 14);
+		contentPanel.add(lblDateUpdate);
+		
+		tfDateUpdate = new JTextField();
+		tfDateUpdate.setEditable(false);
+		tfDateUpdate.setText(registry.getDateUpdate());
+		tfDateUpdate.setColumns(10);
+		tfDateUpdate.setBounds(224, 313, 169, 20);
+		contentPanel.add(tfDateUpdate);
+		
+		// Buttons:
 		
 		btnBack = new JButton("Volver");
-		btnBack.setBounds(224, 54, 120, 23);
+		btnBack.setBounds(224, 54, 169, 23);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
