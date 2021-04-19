@@ -1,10 +1,13 @@
 package por.ayf.eng.sp.view;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
 
 import javax.swing.DefaultListModel;
@@ -16,6 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +35,7 @@ import javax.swing.JScrollPane;
 import por.ayf.eng.sp.database.SQLManager;
 import por.ayf.eng.sp.database.SQLQuery;
 import por.ayf.eng.sp.database.bean.BeanRegistry;
+import por.ayf.eng.sp.security.Encrypter;
 import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.comp.ComponentViewConsultPass;
 import por.ayf.eng.sp.view.comp.ComponentViewCreatePass;
@@ -48,7 +56,8 @@ public class ViewMainWindow extends JFrame {
 	private JMenuBar menuBar;								
 	private JMenu jmFile;								
 	private JMenuItem jmiNew;								
-	private JMenuItem jmiLoad;							
+	private JMenuItem jmiLoad;
+	private JMenuItem jmiSave;	
 	private JMenuItem jmiExit;								
 	private JMenu jmHelp;									
 	private JMenuItem mntmAbout;					
@@ -60,8 +69,9 @@ public class ViewMainWindow extends JFrame {
 	private JList<String> list;								
 	private static DefaultListModel<String> model;			
 	
-	private String url = null;										
-	private boolean load = false;						
+	private String path = null;										
+	private boolean loaded = false;					
+	private String keyWord = "";
 	private static SQLManager sqlManager = null;	
 	
 	public ViewMainWindow() {
@@ -70,20 +80,44 @@ public class ViewMainWindow extends JFrame {
 	}
 	
 	private void newDatabase() {	
-		url = JOptionPane.showInputDialog("¿Como se llama la base de datos?");
+		JFileChooser jFChooser = new JFileChooser();
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter(".sqlite", "sqlite"); 
+
+		jFChooser.setDialogTitle("Crear fichero de base de datos");
+		jFChooser.setFileFilter(filtro);
+		jFChooser.setAcceptAllFileFilterUsed(false);
+		jFChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jFChooser.setMultiSelectionEnabled(false);
 	
-		// If the name is incorrect, give one by defect.
-		if(url == null || url.equals("") || url.contains(".")) {
-			url = "safepass.sqlite";
-		} else {
-			url += ".sqlite";
-		}
+		int seleccion = jFChooser.showSaveDialog(contentPane);
+
+		if(seleccion == JFileChooser.APPROVE_OPTION){
+			path = jFChooser.getSelectedFile().getAbsolutePath();
+			path += ".sqlite";
+			
+			do {
+	        	JPanel panelAux = new JPanel(new BorderLayout());
+	        	JLabel lblAux = new JLabel("Escriba su clave de encriptado.");
+	        	JPasswordField jpfPasswordAux = new JPasswordField();
+	        	panelAux.add(lblAux, BorderLayout.NORTH);
+	        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
+	        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+	
+	        	if (option == JOptionPane.OK_OPTION) {
+	        		keyWord = new String(jpfPasswordAux.getPassword());
+	        	} else {
+	        		return;
+	        	}
+	        } while(keyWord == null || keyWord.equals(""));
 		
-		try {
-			sqlManager.createDatabase(url);
-			load = true;
-		} catch (Exception e) {
-			Util.showMessage(getClass(), "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			try {
+				sqlManager.createDatabase(path);
+				loaded = true;
+			} catch (Exception e) {
+				Util.showMessage(getClass(), "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
+			}
+		} else {
+			return;
 		}
 	}
 	
@@ -91,6 +125,7 @@ public class ViewMainWindow extends JFrame {
 		JFileChooser jFChooser = new JFileChooser();
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter(".sqlite", "sqlite"); 
 
+		jFChooser.setDialogTitle("Cargar fichero de base de datos");
 		jFChooser.setFileFilter(filtro);
 		jFChooser.setAcceptAllFileFilterUsed(false);
 		jFChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -99,17 +134,77 @@ public class ViewMainWindow extends JFrame {
 		int seleccion = jFChooser.showOpenDialog(contentPane);
 
 		if(seleccion == JFileChooser.APPROVE_OPTION){
-			url = jFChooser.getSelectedFile().getAbsolutePath();
-			load = true;
+			path = jFChooser.getSelectedFile().getAbsolutePath();
+
+			do {
+	        	JPanel panelAux = new JPanel(new BorderLayout());
+	        	JLabel lblAux = new JLabel("¿Cuál su clave de encriptado?");
+	        	JPasswordField jpfPasswordAux = new JPasswordField();
+	        	panelAux.add(lblAux, BorderLayout.NORTH);
+	        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
+	        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+	        	if (option == JOptionPane.OK_OPTION) {
+	        		keyWord = new String(jpfPasswordAux.getPassword());
+	        	} else {
+	        		return;
+	        	}
+	        } while(keyWord == null || keyWord.equals(""));
 			
 			try {
-				sqlManager.loadDatabase(url);
+				Encrypter.aesDecrypt(keyWord, path);
+				sqlManager.loadDatabase(path);
 			} catch (Exception e) {
 				Util.showMessage(getClass(), "Error al cargar base de datos.", JOptionPane.ERROR_MESSAGE, e);
+				return;
 			}
-		}	
+			
+			loaded = true;
+		} else {
+			loaded = false;
+			return;
+		}
 		
 		refreshList();
+	}
+	
+	private void saveDatabase() {
+		JFileChooser jFChooser = new JFileChooser();
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter(".sqlite", "sqlite"); 
+
+		jFChooser.setDialogTitle("Guardar fichero de base de datos");
+		jFChooser.setFileFilter(filtro);
+		jFChooser.setAcceptAllFileFilterUsed(false);
+		jFChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jFChooser.setMultiSelectionEnabled(false);
+	
+		int seleccion = jFChooser.showSaveDialog(contentPane);
+
+		if(seleccion == JFileChooser.APPROVE_OPTION){
+			String newPath = jFChooser.getSelectedFile().getAbsolutePath();
+			
+			if(!path.equals(newPath)) {
+				newPath += ".sqlite";
+				File newFile = new File(newPath);
+				
+				File oldFile = new File(path);
+				try {
+					Files.copy(oldFile.toPath(), newFile.toPath());
+				} catch (Exception ex) {
+					Util.showMessage(getClass(), "Error al guardar base de datos.", JOptionPane.ERROR_MESSAGE, ex);
+				}
+				
+				path = newPath;
+			}
+			
+			try {
+				sqlManager.saveDatabase();
+				Encrypter.aesEncrypt(keyWord, path);
+			} catch (Exception ex) {
+				Util.showMessage(getClass(), "Error al guardar base de datos.", JOptionPane.ERROR_MESSAGE, ex);
+			}
+
+		}
 	}
 	
 	private void creator() {
@@ -118,8 +213,8 @@ public class ViewMainWindow extends JFrame {
 	
 	private void createPass() {
 		// Check the database is active.
-		if(url != null && load) {
-			new ComponentViewCreatePass(this, true, sqlManager, load).setVisible(true);
+		if(path != null && loaded) {
+			new ComponentViewCreatePass(this, true, sqlManager, loaded).setVisible(true);
 		} else {
 			Util.showMessage(getClass(), "Debe cargar la base de datos previamente.", JOptionPane.WARNING_MESSAGE, null);
 		}
@@ -127,7 +222,7 @@ public class ViewMainWindow extends JFrame {
 	
 	private void modifyPass() {	
 		// Check the database is active.
-		if(url != null && load) {
+		if(path != null && loaded) {
 			// If I'm selected a registry, then can edit.
 			if(list.getSelectedIndex() != -1) { 
 				new ComponentViewModifyPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
@@ -139,7 +234,7 @@ public class ViewMainWindow extends JFrame {
 	
 	private void consultPass() {
 		// Check the database is active.
-		if(url != null && load) {
+		if(path != null && loaded) {
 			// If I'm selected a registry, then can see.
 			if(list.getSelectedIndex() != -1) { 
 				new ComponentViewConsultPass(this, true, sqlManager, list.getSelectedValue()).setVisible(true);
@@ -150,7 +245,7 @@ public class ViewMainWindow extends JFrame {
 	}
 	
 	private void deletePass() {
-		if(!load) {
+		if(!loaded) {
 			return;
 		}
 
@@ -214,7 +309,7 @@ public class ViewMainWindow extends JFrame {
 		jmFile = new JMenu("Archivo");
 		menuBar.add(jmFile);
 		
-		jmiNew = new JMenuItem("Nuevo fichero        ");
+		jmiNew = new JMenuItem("Nuevo base de datos        ");
 		jmiNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				newDatabase(); 
@@ -223,7 +318,7 @@ public class ViewMainWindow extends JFrame {
 		jmiNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK));
 		jmFile.add(jmiNew);
 		
-		jmiLoad = new JMenuItem("Cargar fichero         ");
+		jmiLoad = new JMenuItem("Cargar base de datos         ");
 		jmiLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				loadDatabase();
@@ -231,6 +326,15 @@ public class ViewMainWindow extends JFrame {
 		});
 		jmiLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
 		jmFile.add(jmiLoad);
+		
+		jmiSave = new JMenuItem("Guardar base de datos         ");
+		jmiSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveDatabase();
+			}
+		});
+		jmiSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
+		jmFile.add(jmiSave);
 		
 		jmFile.addSeparator();
 		

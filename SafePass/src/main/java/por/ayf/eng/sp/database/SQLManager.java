@@ -1,19 +1,14 @@
 package por.ayf.eng.sp.database;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 
 import org.sqlite.SQLiteDataSource;
 import org.sqlite.SQLiteJDBCLoader;
 
-import por.ayf.eng.sp.database.bean.BeanUser;
 import por.ayf.eng.sp.util.Util;
 
 /**
@@ -29,10 +24,6 @@ public class SQLManager {
 	private SQLiteDataSource dataSource = null;
 	private Connection connection = null;
 	
-	private BeanUser user;
-	private String username = "";
-	private String password = "";
-	
 	protected SQLManager() {
 		
 	}
@@ -46,76 +37,16 @@ public class SQLManager {
 	}
 	
 	public void createDatabase(String url) throws Exception {
-        do {
-        	username = JOptionPane.showInputDialog("¿Cuál es su nombre de usuario?");
-        } while(username == null || username.equals(""));
-        
-        do {
-        	JPanel panelAux = new JPanel(new BorderLayout());
-        	JLabel lblAux = new JLabel("¿Cuál es su password?");
-        	JPasswordField jpfPasswordAux = new JPasswordField();
-        	panelAux.add(lblAux, BorderLayout.NORTH);
-        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
-        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-        	if (option == JOptionPane.OK_OPTION) {
-        		password = new String(jpfPasswordAux.getPassword());
-        	} else {
-        		password = "";
-        	}
-        } while(password == null || password.equals(""));
-		
-        Util.showMessage(SQLManager.class, 
-        		"Base de datos creada.", 
-        		JOptionPane.INFORMATION_MESSAGE, 
-        		null);
-        
-        user = new BeanUser(username, password);
-        
         connect(url);
     	createTables();
 	}
 	
-	public void loadDatabase(String url) throws Exception {
-		int attempts = 0;
-		
-		connect(url);
-		BeanUser user = sqlQuery.selectUser(sqlManager);
-		
-		do {
-        	username = JOptionPane.showInputDialog("¿Cuál es su nombre de usuario?");
-        	
-        	JPanel panelAux = new JPanel(new BorderLayout());
-        	JLabel lblAux = new JLabel("¿Cuál es su password?");
-        	JPasswordField jpfPasswordAux = new JPasswordField();
-        	panelAux.add(lblAux, BorderLayout.NORTH);
-        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
-        	int option = JOptionPane.showConfirmDialog(null, panelAux, "Entrada", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-        	if (option == JOptionPane.OK_OPTION) {
-        		password = new String(jpfPasswordAux.getPassword());
-        	} else {
-        		password = "";
-        	}
-        	
-        	if(user.getUsername().equals(username) && user.getPassword().equals(password)) {
-        		return;
-        	} else {
-        		attempts++;
-        		
-        		if(attempts == 3) {
-        			Util.showMessage(SQLManager.class, "No dispone de más intentos.", JOptionPane.WARNING_MESSAGE, null);
-        		} else {
-        			Util.showMessage(SQLManager.class, "Dispone de " + (3 - attempts) + " intento/s más.", JOptionPane.WARNING_MESSAGE, null);
-        		}
-        	}
-        } while(attempts != 3);
-
-		deleteDatabase(url);
+	public void loadDatabase(String path) throws Exception {
+		connect(path);
 	}
 	
-	private void deleteDatabase(String url) {
-		File database = new File(url);
+	private void deleteDatabase(String path) {
+		File database = new File(path);
 		
 		try {
 			if(database.exists()) {
@@ -131,13 +62,24 @@ public class SQLManager {
 		}
 	}
 	
-	private void connect(String url) throws Exception {
+	public void saveDatabase() {
+		try {
+			connection.commit();
+		} catch (SQLException ex) {
+			Util.showMessage(SQLManager.class, "Error al guardar la base de datos.", JOptionPane.ERROR_MESSAGE, ex);
+		}
+		
+		Util.showMessage(SQLManager.class, "Se ha guardado la base de datos.", JOptionPane.INFORMATION_MESSAGE, null);
+	}
+	
+	private void connect(String path) throws Exception {
 		SQLiteJDBCLoader.initialize();
         dataSource = new SQLiteDataSource();
         sqlQuery = new SQLQuery();
         
-    	dataSource.setUrl("jdbc:sqlite:" + url);
+    	dataSource.setUrl("jdbc:sqlite:" + path);
     	connection = dataSource.getConnection();
+    	connection.setAutoCommit(false);
     	
     	if(connection == null) {
     		Util.showMessage(SQLManager.class, "Error al conectar a la base de datos.", JOptionPane.ERROR_MESSAGE, null);
@@ -159,8 +101,6 @@ public class SQLManager {
 	private void createTables() {
 		try {
 			sqlQuery.createTableRegistry(sqlManager);
-			sqlQuery.createTableUser(sqlManager);
-			sqlQuery.insertUser(sqlManager, user);	
 		} catch (Exception e) {
 			Util.showMessage(SQLManager.class, "Error al crear las tablas de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}

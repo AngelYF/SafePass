@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import por.ayf.eng.sp.database.bean.BeanRegistry;
-import por.ayf.eng.sp.database.bean.BeanUser;
 import por.ayf.eng.sp.util.Util;
 
 /**
@@ -41,19 +40,6 @@ public class SQLQuery {
 		}
 	}
 	
-	public void createTableUser(SQLManager sqlManager) {		
-		Connection connection = sqlManager.getConnection();
-		Statement sentencia;
-		
-		try {
-			sentencia = connection.createStatement();
-			sentencia.execute("CREATE TABLE USER (USERNAME TEXT(50) PRIMARY KEY NOT NULL, "
-												+ "PASSWORD TEXT(50) NOT NULL);");
-		} catch (Exception e) {
-			Util.showMessage(SQLQuery.class, "Error al crear la tabla de usuarios de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
-		}
-	}
-	
 	public void insertRegistry(SQLManager sqlManager, BeanRegistry registry) {		
 		Connection connection = sqlManager.getConnection();
 		Statement sentencia;
@@ -62,18 +48,6 @@ public class SQLQuery {
 			sentencia = connection.createStatement();
 			sentencia.execute("INSERT INTO REGISTRY (NAME, USERNAME, EMAIL, PASSWORD, QUESTION, ANSWER_QUESTION, DATE_CREATE, DATE_UPDATE) "
 										  + "VALUES ('" + registry.getName() + "', '" + registry.getUsername() + "', '" + registry.getEmail() + "', '" + registry.getPassword() + "', '" + registry.getQuestion() + "', '" + registry.getAnswerQuestion() + "', DATETIME('NOW'), DATETIME('NOW'));");	
-		} catch (Exception e) {
-			Util.showMessage(SQLQuery.class, "Error al insertar nuevo usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
-		}
-	}
-	
-	public void insertUser(SQLManager sqlManager, BeanUser user) {		
-		Connection connection = sqlManager.getConnection();
-		Statement sentencia;
-		
-		try {
-			sentencia = connection.createStatement();
-			sentencia.execute("INSERT INTO USER (USERNAME, PASSWORD) VALUES ('" + user.getUsername() + "', '" + user.getPassword() + "');");	
 		} catch (Exception e) {
 			Util.showMessage(SQLQuery.class, "Error al insertar nuevo usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
 		}
@@ -129,25 +103,6 @@ public class SQLQuery {
 		}
 		
 		return registry;
-	}
-	
-	public BeanUser selectUser(SQLManager sqlManager) {
-		Connection connection = sqlManager.getConnection();
-		Statement sentencia;
-		BeanUser user = null;
-		
-		try {
-			sentencia = connection.createStatement();
-			ResultSet result = sentencia.executeQuery("SELECT * FROM USER;");	
-
-			while(result.next()) {
-				user = new BeanUser(result.getString("USERNAME"), result.getString("PASSWORD"));
-            }
-		} catch (Exception e) {
-			Util.showMessage(SQLQuery.class, "Error al obtener el usuario de la base de datos.", JOptionPane.ERROR_MESSAGE, e);
-		}
-		
-		return user;
 	}
 	
 	public void deleteRegistry(SQLManager sqlManager, String name) {		
