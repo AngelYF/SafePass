@@ -20,9 +20,7 @@ import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.awt.event.InputEvent;
 import java.awt.event.ActionListener;
@@ -81,10 +79,10 @@ public class ViewMainWindow extends JFrame {
 	
 	private void newDatabase() {	
 		JFileChooser jFChooser = new JFileChooser();
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter(".sqlite", "sqlite"); 
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".sqlite", "sqlite"); 
 
 		jFChooser.setDialogTitle("Crear fichero de base de datos");
-		jFChooser.setFileFilter(filtro);
+		jFChooser.setFileFilter(filter);
 		jFChooser.setAcceptAllFileFilterUsed(false);
 		jFChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jFChooser.setMultiSelectionEnabled(false);
@@ -92,8 +90,15 @@ public class ViewMainWindow extends JFrame {
 		int seleccion = jFChooser.showSaveDialog(contentPane);
 
 		if(seleccion == JFileChooser.APPROVE_OPTION){
-			path = jFChooser.getSelectedFile().getAbsolutePath();
-			path += ".sqlite";
+			
+			if(jFChooser.getSelectedFile().exists()) {
+				path = jFChooser.getSelectedFile().getAbsolutePath();
+				
+				File existFile = new File(path);
+				existFile.delete();
+			} else {
+				path = jFChooser.getSelectedFile().getAbsolutePath() + ".sqlite";
+			}
 			
 			do {
 	        	JPanel panelAux = new JPanel(new BorderLayout());
