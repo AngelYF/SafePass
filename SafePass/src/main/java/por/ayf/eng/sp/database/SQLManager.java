@@ -45,6 +45,7 @@ public class SQLManager {
 		connect(path);
 	}
 	
+	@SuppressWarnings("unused")
 	private void deleteDatabase(String path) {
 		File database = new File(path);
 		
