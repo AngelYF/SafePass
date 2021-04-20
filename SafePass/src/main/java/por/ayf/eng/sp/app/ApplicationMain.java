@@ -1,8 +1,12 @@
 package por.ayf.eng.sp.app;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import por.ayf.eng.sp.security.Encrypter;
 import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.ViewMainWindow;
 
@@ -22,7 +26,21 @@ public class ApplicationMain {
 //	        UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");  		// Other.
 			
 	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 				// By defect.
-	        new ViewMainWindow(); 
+	        
+	        new ViewMainWindow().addWindowListener( new WindowAdapter() {
+	        	public void windowClosing( WindowEvent evt ) {
+	        		if(ViewMainWindow.loaded) {
+	        			try {
+							Encrypter.aesEncrypt(ViewMainWindow.keyWord, ViewMainWindow.path);
+						} catch (Exception e) {
+							Util.showMessage(ViewMainWindow.class, "Ha ocurrido un error al encriptar la información.", JOptionPane.ERROR_MESSAGE, e);
+						}
+	        		}
+	        		
+	        		System.exit(0);
+	        	}
+	        });
+	        
         } catch (Exception e) {
 			Util.showMessage(ViewMainWindow.class, "Ha ocurrido un error al iniciar la aplicación.", JOptionPane.ERROR_MESSAGE, e);
         } 
