@@ -102,7 +102,7 @@ public class ViewMainWindow extends JFrame {
 			
 			do {
 	        	JPanel panelAux = new JPanel(new BorderLayout());
-	        	JLabel lblAux = new JLabel("Escriba su clave de encriptado.");
+	        	JLabel lblAux = new JLabel("Escriba su clave de encriptado. Tiene que tener al menos 16 caracteres.");
 	        	JPasswordField jpfPasswordAux = new JPasswordField();
 	        	panelAux.add(lblAux, BorderLayout.NORTH);
 	        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
@@ -113,10 +113,11 @@ public class ViewMainWindow extends JFrame {
 	        	} else {
 	        		return;
 	        	}
-	        } while(keyWord == null || keyWord.equals(""));
+	        } while(keyWord == null || keyWord.equals("") || keyWord.length() < 16);
 		
 			try {
 				sqlManager.createDatabase(path);
+				sqlManager.saveDatabase();
 				loaded = true;
 			} catch (Exception e) {
 				Util.showMessage(getClass(), "Error al crear la base de datos.", JOptionPane.ERROR_MESSAGE, e);
@@ -143,7 +144,7 @@ public class ViewMainWindow extends JFrame {
 
 			do {
 	        	JPanel panelAux = new JPanel(new BorderLayout());
-	        	JLabel lblAux = new JLabel("¿Cuál su clave de encriptado?");
+	        	JLabel lblAux = new JLabel("¿Cuál su clave de desencriptado?");
 	        	JPasswordField jpfPasswordAux = new JPasswordField();
 	        	panelAux.add(lblAux, BorderLayout.NORTH);
 	        	panelAux.add(jpfPasswordAux, BorderLayout.SOUTH);
@@ -320,6 +321,9 @@ public class ViewMainWindow extends JFrame {
 		jmiExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(loaded) {
+					
+					sqlManager.rollbackDatabase();
+					
 					try {
 						Encrypter.aesEncrypt(ViewMainWindow.keyWord, ViewMainWindow.path);
 					} catch (Exception e) {

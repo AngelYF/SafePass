@@ -73,6 +73,14 @@ public class SQLManager {
 		Util.showMessage(SQLManager.class, "Se ha guardado la base de datos.", JOptionPane.INFORMATION_MESSAGE, null);
 	}
 	
+	public void rollbackDatabase() {
+		try {
+			connection.rollback();
+		} catch (SQLException ex) {
+			Util.showMessage(SQLManager.class, "Error al hacer rollback a la base de datos.", JOptionPane.ERROR_MESSAGE, ex);
+		}
+	}
+	
 	private void connect(String path) throws Exception {
 		SQLiteJDBCLoader.initialize();
         dataSource = new SQLiteDataSource();

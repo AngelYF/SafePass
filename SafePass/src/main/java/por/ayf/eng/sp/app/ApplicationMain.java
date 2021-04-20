@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import por.ayf.eng.sp.database.SQLManager;
 import por.ayf.eng.sp.security.Encrypter;
 import por.ayf.eng.sp.util.Util;
 import por.ayf.eng.sp.view.ViewMainWindow;
@@ -30,6 +31,9 @@ public class ApplicationMain {
 	        new ViewMainWindow().addWindowListener( new WindowAdapter() {
 	        	public void windowClosing( WindowEvent evt ) {
 	        		if(ViewMainWindow.loaded) {
+	        			
+	        			SQLManager.getInstance().rollbackDatabase();
+	        			
 	        			try {
 							Encrypter.aesEncrypt(ViewMainWindow.keyWord, ViewMainWindow.path);
 						} catch (Exception e) {
